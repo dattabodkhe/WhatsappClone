@@ -26,7 +26,8 @@ A WhatsApp clone built with **Kotlin** and **Jetpack Compose**, featuring **real
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/WhatsappClone.git
+   git clone https://github.com/dattabodkhe/WhatsappClone.git
+
    ```
 2. Open in **Android Studio**
 3. Connect your Firebase project
