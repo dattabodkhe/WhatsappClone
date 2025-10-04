@@ -46,12 +46,10 @@ A WhatsApp clone built with **Kotlin** and **Jetpack Compose**, featuring **real
 ![Chat]![prij5](https://github.com/user-attachments/assets/13a0c668-b000-443d-a368-b0f313c50dce)
 
 
-
-
-
 ---
-> ⚠️ **Project Status: Under Construction 🚧**
->  WhatsApp Clone is currently under active development. Some features may be incomplete or missing.  
+
+## ⚠️ **Project Status: Under Construction 🚧**
+ WhatsApp Clone is currently under active development. Some features may be incomplete or missing.  
  
 
 ## 🤝 Contributing
