@@ -41,12 +41,11 @@ A WhatsApp clone built with **Kotlin** and **Jetpack Compose**, featuring **real
 
 
 ### 🔐 Login Screen
-![Login](![proj4](https://github.com/user-attachments/assets/02baea2d-4087-49a2-b1cd-df2cb4a6a581)
-)
+![Login]![proj4](https://github.com/user-attachments/assets/02baea2d-4087-49a2-b1cd-df2cb4a6a581)
+
 
 ### 💬 Chat Screen
-![Chat](![prij5](https://github.com/user-attachments/assets/13a0c668-b000-443d-a368-b0f313c50dce)
-)
+![Chat]![prij5](https://github.com/user-attachments/assets/13a0c668-b000-443d-a368-b0f313c50dce)
 
 ---
 > ⚠️ **Project Status: Under Construction 🚧**
