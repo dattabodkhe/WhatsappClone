@@ -25,7 +25,7 @@ class Baseviewmodel : ViewModel(){
 		}
 		val databaseReference = FirebaseDatabase.getInstance().getReference("user")
 		databaseReference.orderByChild("phoneNumber").equalTo(phoneNumber)
-			.addListenerForSingleValueEvent(object : ValueEventListener {
+			.addValueEventListener(object : ValueEventListener {
 				
 				override fun onDataChange(snapshot : DataSnapshot){
 					if (snapshot.exists()){
@@ -45,7 +45,7 @@ class Baseviewmodel : ViewModel(){
 	fun getChatforUser(userId: String,callback :(list<ChatListModel>)-> Unit){
 		val chatRef= FirebaseDatabase.getInstance().getReference("user/$userId/chat")
 		chatRef.orderByChild("userId").equalTo(userId)
-			.addListenerForSingleValueEvent(object : ValueEventListener{
+			.addValueEventListener(object : ValueEventListener{
 				override fun onDataChange(snapshot : DataSnapshot) {
 					val chatList = mutableListOf<ChatListModel>()
 					
@@ -62,10 +62,28 @@ class Baseviewmodel : ViewModel(){
 					callback(emptyList())
 				}
 			})
-			
-			}
+		
+	}
+	private val _chatList = mutableListOf<List<ChatListModel>>(emptyList())
+	val chatList= _chatList.asStateFlow()
 	
-	
+	fun localChatData(){
+		val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+		if (currentUserId!=null){
+			val  chatRef = FirebaseDatabase.getInstance().getReference("chat")
+			 chatRef.orderByChild("userId").equalTo(currentUserId)
+				 .addValueEventListener(object : ValueEventListener{
+					 override fun onDataChange(snapshot : DataSnapshot) {
+						 val chatList = mutableListOf<ChatListModel>()
+						 for (childSnapshot in snapshot.children){
+							 val chat = childSnapshot.getValue(ChatListModel::class.java)
+							 if (chat!=null){
+								 chatList.add(chat)
+							 }
+						 }
+					 }
+				 })
+		}
 	}
 	
-	
+}
