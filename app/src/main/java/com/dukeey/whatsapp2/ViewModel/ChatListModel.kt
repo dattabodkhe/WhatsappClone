@@ -1,11 +1,15 @@
-package com.dukeey.whatsapp2.ViewModel
+package com.dukeey.whatsapp2.homeSCR
 
-// Simple data model for a chat item
+import android.graphics.Bitmap
+
 data class ChatListModel(
-	val userId: String = "",
-	val name: String = "",
-	val phoneNumber: String = "",
-	val lastMessage: String = "",
-	val timestamp: Long = 0L,
-	val profileImage: String = ""
+	val userId : String = "",
+	val name : String = "",
+	val phoneNumber : String = "",
+	val message : String = "",
+	val time : String = "",
+	val timestamp : Long = 0L,
+	val image : Bitmap? = null,
+	val profileImage : String? = null,
+	val lastMessage : String = ""
 )
