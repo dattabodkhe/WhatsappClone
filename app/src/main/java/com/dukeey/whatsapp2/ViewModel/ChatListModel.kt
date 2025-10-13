@@ -8,7 +8,8 @@ data class ChatListModel(
 	val phoneNumber : String = "",
 	val message : String = "",
 	val time : String = "",
-	val timestamp : Long = 0L,
+	val timestamp: String = System.currentTimeMillis().toString()
+,
 	val image : Bitmap? = null,
 	val profileImage : String? = null,
 	val lastMessage : String = ""

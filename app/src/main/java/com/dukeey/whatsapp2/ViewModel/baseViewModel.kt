@@ -13,7 +13,7 @@ import com.google.firebase.database.*
 
 class baseViewModel : ViewModel() {
 	
-	// 🔍 Search user by phone number
+	
 	fun searchUserByPhoneNumber(phoneNumber: String, callback: (ChatListModel?) -> Unit) {
 		val currentUser = FirebaseAuth.getInstance().currentUser
 		if (currentUser == null) {
@@ -41,7 +41,7 @@ class baseViewModel : ViewModel() {
 			})
 	}
 	
-	// 💬 Get chats for user
+	
 	fun getChatForUser(userId: String, callback: (List<ChatListModel>) -> Unit) {
 		val chatRef = FirebaseDatabase.getInstance().getReference("user/$userId/chat")
 		chatRef.addValueEventListener(object : ValueEventListener {
@@ -65,7 +65,6 @@ class baseViewModel : ViewModel() {
 	
 	private val databaseReference = FirebaseDatabase.getInstance().reference
 	
-	// 📩 Send message
 	fun sendMessage(senderPhoneNumber: String, receiverPhoneNumber: String, messageText: String) {
 		val messageId = databaseReference.push().key ?: return
 		val message = Message(
@@ -86,8 +85,7 @@ class baseViewModel : ViewModel() {
 			.child(messageId)
 			.setValue(message)
 	}
-	
-	// 📥 Get messages in real time
+
 	fun getMessages(senderPhoneNumber: String, receiverPhoneNumber: String, onNewMessage: (Message) -> Unit) {
 		val messageRef = databaseReference.child("messages")
 			.child(senderPhoneNumber)
@@ -110,7 +108,7 @@ class baseViewModel : ViewModel() {
 		})
 	}
 	
-	// 🕓 Fetch last message for chat
+
 	fun fetchLastMessageForChat(
 		senderPhoneNumber: String,
 		receiverPhoneNumber: String,
@@ -139,7 +137,7 @@ class baseViewModel : ViewModel() {
 			})
 	}
 	
-	// 📋 Load chat list
+
 	fun loadChatList(currentUserPhoneNumber: String, onChatListLoaded: (List<ChatListModel>) -> Unit) {
 		val chatList = mutableListOf<ChatListModel>()
 		val chatRef = FirebaseDatabase.getInstance().reference
@@ -185,7 +183,7 @@ class baseViewModel : ViewModel() {
 		})
 	}
 	
-	// 🧩 Convert Base64 → Bitmap
+	
 	private fun decodeBase64ToBitmap(base64Image: String): Bitmap? {
 		return try {
 			val decodedBytes = Base64.decode(base64Image, Base64.DEFAULT)
