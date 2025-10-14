@@ -3,14 +3,13 @@ package com.dukeey.whatsapp2.homeSCR
 import android.graphics.Bitmap
 
 data class ChatListModel(
-	val userId : String = "",
-	val name : String = "",
-	val phoneNumber : String = "",
-	val message : String = "",
-	val time : String = "",
-	val timestamp: String = System.currentTimeMillis().toString()
-,
-	val image : Bitmap? = null,
-	val profileImage : String? = null,
-	val lastMessage : String = ""
+	val name: String = "",
+	val image: Bitmap? = null,
+	val message: String = "",
+	val time: String = "",
+	val userId: String = "",
+	val timestamp: String = "",
+	val phoneNumber: String = "",
+	val lastMessage: String = "",
+	val profileImage: String? = null
 )

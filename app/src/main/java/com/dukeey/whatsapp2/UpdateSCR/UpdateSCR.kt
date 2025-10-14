@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukeey.whatsapp2.R
 import com.dukeey.whatsapp2.bottomNevigation.buttomNevigation
-import com.dukeey.whatsapp2.chatBox.chatListModel
+
 
 
 @Composable

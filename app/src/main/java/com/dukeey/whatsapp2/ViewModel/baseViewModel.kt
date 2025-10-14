@@ -4,16 +4,24 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import com.dukeey.whatsapp2.Model.Message
 import com.dukeey.whatsapp2.homeSCR.ChatListModel
-
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class baseViewModel : ViewModel() {
+class baseViewModel(navController : NavHostController) : ViewModel() {
 	
+	// ✅ Live chat list for Jetpack Compose
+	private val _chatlist = mutableStateOf<List<ChatListModel>>(emptyList())
+	val chatlist: State<List<ChatListModel>> get() = _chatlist
 	
+	private val databaseReference = FirebaseDatabase.getInstance().reference
+	
+	// 🔍 Search user by phone number
 	fun searchUserByPhoneNumber(phoneNumber: String, callback: (ChatListModel?) -> Unit) {
 		val currentUser = FirebaseAuth.getInstance().currentUser
 		if (currentUser == null) {
@@ -41,7 +49,7 @@ class baseViewModel : ViewModel() {
 			})
 	}
 	
-	
+	// 🧩 Get chat list for a user (non-realtime)
 	fun getChatForUser(userId: String, callback: (List<ChatListModel>) -> Unit) {
 		val chatRef = FirebaseDatabase.getInstance().getReference("user/$userId/chat")
 		chatRef.addValueEventListener(object : ValueEventListener {
@@ -63,8 +71,7 @@ class baseViewModel : ViewModel() {
 		})
 	}
 	
-	private val databaseReference = FirebaseDatabase.getInstance().reference
-	
+	// 💬 Send a message (both sender & receiver)
 	fun sendMessage(senderPhoneNumber: String, receiverPhoneNumber: String, messageText: String) {
 		val messageId = databaseReference.push().key ?: return
 		val message = Message(
@@ -85,8 +92,13 @@ class baseViewModel : ViewModel() {
 			.child(messageId)
 			.setValue(message)
 	}
-
-	fun getMessages(senderPhoneNumber: String, receiverPhoneNumber: String, onNewMessage: (Message) -> Unit) {
+	
+	// 📩 Real-time message updates
+	fun getMessages(
+		senderPhoneNumber: String,
+		receiverPhoneNumber: String,
+		onNewMessage: (Message) -> Unit
+	) {
 		val messageRef = databaseReference.child("messages")
 			.child(senderPhoneNumber)
 			.child(receiverPhoneNumber)
@@ -108,7 +120,7 @@ class baseViewModel : ViewModel() {
 		})
 	}
 	
-
+	// 🕒 Get last message + timestamp for each chat
 	fun fetchLastMessageForChat(
 		senderPhoneNumber: String,
 		receiverPhoneNumber: String,
@@ -123,8 +135,10 @@ class baseViewModel : ViewModel() {
 			.addListenerForSingleValueEvent(object : ValueEventListener {
 				override fun onDataChange(snapshot: DataSnapshot) {
 					if (snapshot.exists()) {
-						val lastMessage = snapshot.children.firstOrNull()?.child("message")?.value as? String
-						val timestamp = snapshot.children.firstOrNull()?.child("timeStamp")?.value?.toString()
+						val lastMessage =
+							snapshot.children.firstOrNull()?.child("message")?.value as? String
+						val timestamp =
+							snapshot.children.firstOrNull()?.child("timeStamp")?.value?.toString()
 						onLastMessageFetched(lastMessage ?: "No message", timestamp ?: "--:--")
 					} else {
 						onLastMessageFetched("No message", "--:--")
@@ -137,12 +151,13 @@ class baseViewModel : ViewModel() {
 			})
 	}
 	
-
+	// 📲 One-time chat list fetch
 	fun loadChatList(currentUserPhoneNumber: String, onChatListLoaded: (List<ChatListModel>) -> Unit) {
 		val chatList = mutableListOf<ChatListModel>()
 		val chatRef = FirebaseDatabase.getInstance().reference
 			.child("chats")
 			.child(currentUserPhoneNumber)
+		
 		chatRef.addListenerForSingleValueEvent(object : ValueEventListener {
 			override fun onDataChange(snapshot: DataSnapshot) {
 				if (snapshot.exists()) {
@@ -157,12 +172,9 @@ class baseViewModel : ViewModel() {
 								ChatListModel(
 									name = name,
 									image = profileImageBitmap,
-									message = lastMessage,
-									time = time,
-									userId = phoneNumber,
-									timestamp = time,
-									phoneNumber = phoneNumber,
 									lastMessage = lastMessage,
+									time = time,
+									phoneNumber = phoneNumber,
 									profileImage = image
 								)
 							)
@@ -183,7 +195,29 @@ class baseViewModel : ViewModel() {
 		})
 	}
 	
+	// ✅ Real-time chat list (auto-updates in UI)
+	fun loadChatListRealtime(currentUserPhoneNumber: String) {
+		val chatRef = FirebaseDatabase.getInstance().reference
+			.child("chats")
+			.child(currentUserPhoneNumber)
+		
+		chatRef.addValueEventListener(object : ValueEventListener {
+			override fun onDataChange(snapshot: DataSnapshot) {
+				val chatList = mutableListOf<ChatListModel>()
+				snapshot.children.forEach { child ->
+					val chat = child.getValue(ChatListModel::class.java)
+					chat?.let { chatList.add(it) }
+				}
+				_chatlist.value = chatList
+			}
+			
+			override fun onCancelled(error: DatabaseError) {
+				Log.e("BaseViewModel", "Chat list load cancelled: ${error.message}")
+			}
+		})
+	}
 	
+	// 🧠 Decode base64 to bitmap (for profile pics)
 	private fun decodeBase64ToBitmap(base64Image: String): Bitmap? {
 		return try {
 			val decodedBytes = Base64.decode(base64Image, Base64.DEFAULT)

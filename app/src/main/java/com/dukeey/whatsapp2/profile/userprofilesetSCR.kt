@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.dukeey.whatsapp2.profile
 
 import Routes
@@ -5,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -43,6 +47,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.dukeey.whatsapp2.R
 import com.dukeey.whatsapp2.ViewModel.PhoneAuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -149,12 +154,32 @@ fun UserProfileSetSCR(
 		)
 		
 		Spacer(modifier = Modifier.height(16.dp))
-		
 		Button(
 			onClick = {
-				phoneAuthViewModel.saveUserProfile(userId, name, status, bitmapImage!!)
+				val currentUser = FirebaseAuth.getInstance().currentUser
+				val uid = currentUser?.uid
+				
+				if (uid == null) {
+					Toast.makeText(context, "User not logged in!", Toast.LENGTH_SHORT).show()
+					return@Button
+				}
+				
+				if (bitmapImage == null) {
+					Toast.makeText(context, "Please select a profile image", Toast.LENGTH_SHORT)
+						.show()
+					return@Button
+				}
+				
+				if (name.isBlank()) {
+					Toast.makeText(context, "Please enter your name", Toast.LENGTH_SHORT).show()
+					return@Button
+				}
+				
+				phoneAuthViewModel.saveUserProfile(uid, name.trim(), status.trim(), bitmapImage!!)
 				navController.navigate(Routes.HomeSCR)
-			},
+			
+		
+	},
 			colors = ButtonDefaults.buttonColors(colorResource(R.color.light_Green))
 		) {
 			Text(text = "Save")

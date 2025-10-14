@@ -59,6 +59,7 @@ dependencies {
 	implementation ("androidx.compose.foundation:foundation")
 	implementation ("androidx.compose.ui:ui")
 	implementation ("androidx.compose.ui:ui-tooling-preview")
+	implementation(libs.androidx.ui.graphics)
 	debugImplementation ("androidx.compose.ui:ui-tooling")
 	
 	implementation("com.google.dagger:hilt-android:2.57.1")

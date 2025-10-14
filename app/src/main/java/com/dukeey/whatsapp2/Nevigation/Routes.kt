@@ -26,5 +26,8 @@ sealed class Routes {
 	
 	@Serializable
 	data object UserProfileSetSCR : Routes()
+	
+	@Serializable
+	data object SettingSCR:Routes()
 }
 
